@@ -1,0 +1,12 @@
+services:
+  react-vite:
+    image: react-movie-app-image
+    build: .
+    container_name: react-movie-app-container
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
