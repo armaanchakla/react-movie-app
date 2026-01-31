@@ -4,11 +4,18 @@ import './App.css'
 import NavBar from './Components/NavBar.jsx';
 import MovieCard from './Components/MovieCard.jsx';
 import Spinner from './Components/Spinner.jsx';
+import useTheme from './Components/UseTheme.jsx';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
+  const { theme, toggleTheme } = useTheme();
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  // const filteredMovies = movies.filter((movie) =>
+  //   movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const fetchMovies = async () => {
     try {
@@ -40,22 +47,32 @@ function App() {
 
   return (
     <>
-      <input type="checkbox" id="darkToggle" className="hidden"></input>
-      {/* <input type="radio" id="filter-all" name="filter" className="hidden" checked></input>
-      <input type="radio" id="filter-action" name="filter" className="hidden"></input>
-      <input type="radio" id="filter-scifi" name="filter" className="hidden"></input>
-      <input type="radio" id="filter-drama" name="filter" className="hidden"></input> */}
-
-      <div className="page min-h-screen transition-all duration-300">
-        <NavBar />
+      <div className={`page ${theme} min-h-screen`}>    
+        <NavBar  theme={theme} toggleTheme={toggleTheme} />
 
         <main className="max-w-7xl mx-auto px-4 py-8">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center sm:text-left">Popular Movies</h2>
-          {isLoading ? <Spinner /> : error ? <div className="text-center text-red-500">Error loading movies</div> : <MovieCard movies={movies} />}
+
+          <div className="flex justify-center mb-6">
+            <input
+              type="text"
+              placeholder="What do you feel like watching today?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full max-w-md px-4 py-2 rounded-full border focus:outline-none focus:ring-2 ${
+                theme === 'dark'
+                  ? 'bg-slate-800 border-slate-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500'
+                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500'
+              }`}
+            />
+          </div>
+
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center sm:text-left">All Movies</h2>
+          {isLoading && <Spinner />}
+          {error && <div className="text-center text-red-500">Error loading movies</div>}
+          {!isLoading && !error && <MovieCard movies={movies} />}
         </main>
 
         <footer className="text-center py-6 text-sm text-gray-500"> © 2026 arMovies </footer>
-
       </div>
     </>
   )

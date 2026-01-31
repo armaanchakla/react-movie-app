@@ -1,57 +1,89 @@
 @import "tailwindcss";
 
-/* DARK MODE */
-#darkToggle:checked ~ .page {
-  background:#020617;
-  color:#f8fafc;
+/* ======================
+   BASE (LIGHT MODE)
+   ====================== */
+
+.page {
+  background: #ffffff;
+  color: #020617;
+  min-height: 100vh;
 }
 
-#darkToggle:checked ~ .page .card {
-  background:#020617;
-  border:1px solid #1e293b;
+/* ======================
+   DARK MODE (ROOT-BASED)
+   ====================== */
+
+.dark .page {
+  background: #020617;
+  color: #f8fafc;
 }
 
-#darkToggle:checked ~ .page nav {
-  background:#020617;
+.dark nav {
+  background: #020617;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
 }
 
-/* FILTER */
-#filter-action:checked ~ .page .movies .card:not(.action),
-#filter-scifi:checked ~ .page .movies .card:not(.scifi),
-#filter-drama:checked ~ .page .movies .card:not(.drama) {
-  display:none;
+.dark .card {
+  background: #020617;
+  border: 1px solid #1e293b;
 }
 
-/* Overlay base */
+/* ======================
+   NAVBAR
+   ====================== */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ======================
+   THEME TOGGLE BUTTON
+   (INSIDE NAVBAR)
+   ====================== */
+
+.theme-btn {
+  background: transparent;
+  font-size: 1.25rem;
+  cursor: pointer;
+  border: none;
+  line-height: 1;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid #334155;
+  padding: 0.6rem 0.75rem;
+}
+
+.dark .theme-btn {
+  border: 1px solid #e5e7eb;
+}
+
+.theme-btn:hover {
+  opacity: 0.8;
+}
+
+/* ======================
+   MOVIE CARD OVERLAY
+   ====================== */
+
+/* Mobile: always visible */
 .movie-card .overlay {
-  opacity: 1;                /* visible on mobile */
+  opacity: 1;
   transform: translateY(0);
 }
 
 /* Desktop hover effect */
-@media (hover:hover) {
+@media (hover: hover) {
   .movie-card .overlay {
     opacity: 0;
     transform: translateY(20px);
+    transition: all 0.3s ease;
   }
 
   .movie-card:hover .overlay {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/*  BUTTON STYLE */
-.filter-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  background: #e5e7eb;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #020617;
-}
-
-.filter-btn:hover {
-  background: #d1d5db;
 }
