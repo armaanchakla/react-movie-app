@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
 const useTheme = () => {
-  const [theme, setTheme] = useState(document.documentElement.classList.contains("dark") ? "dark" : "light");
+  
+  const [theme, setTheme] = useState(
+    document.documentElement.classList.contains("dark") ? "dark" : "light",
+  );
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -13,6 +16,6 @@ const useTheme = () => {
   };
 
   return { theme, toggleTheme };
-}
+};
 
 export default useTheme;
