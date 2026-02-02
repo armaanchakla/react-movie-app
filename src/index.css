@@ -87,3 +87,41 @@
     transform: translateY(0);
   }
 }
+
+/* ======================
+   TRENDING SECTION
+   ====================== */
+.trending {
+  @apply mt-0;
+
+  & ul {
+    @apply flex flex-row overflow-y-auto gap-5 -mt-10 w-full hide-scrollbar;
+  }
+
+  & ul li {
+    @apply min-w-57.5 flex flex-row items-center;
+  }
+
+  & ul li p {
+    @apply fancy-text mt-5.5 text-nowrap;
+  }
+
+  & ul li img {
+    @apply w-31.75 h-40.75 rounded-lg object-cover -ml-3.5;
+  }
+}
+
+@utility fancy-text {
+  -webkit-text-stroke: 5px rgba(206, 206, 251, 0.5);
+  font-size: 190px;
+  font-family: "Bebas Neue", sans-serif;
+}
+
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

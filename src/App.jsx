@@ -7,6 +7,7 @@ import Spinner from "./Components/Spinner.jsx";
 import useTheme from "./Components/UseTheme.jsx";
 import Search from "./Components/Search.jsx";
 import useDebounce from "./hooks/useDebounce.js";
+import Header from "./Components/Header.jsx";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +19,15 @@ function App() {
   const [totalPages, setTotalPages] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-  useDebounce(() => { setDebouncedSearchTerm(searchTerm) }, 500, [searchTerm]);
+  const [trendingMovies, setTrendingMovies] = useState([]); 
+
+  useDebounce(
+    () => {
+      setDebouncedSearchTerm(searchTerm);
+    },
+    500,
+    [searchTerm],
+  );
 
   const API_BASE_URL = "https://api.themoviedb.org/3";
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -29,7 +38,7 @@ function App() {
     },
   };
 
-  const fetchMovies = async (query = '') => {
+  const fetchMovies = async (query = "") => {
     try {
       setIsLoading(true);
       setError(null);
@@ -45,11 +54,64 @@ function App() {
 
       setMovies(data.results);
       setTotalPages(500 /* data.total_pages */); // TMDB API only allows up to page 500
+      
+      insertTrendingMovies(data.results);
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const insertTrendingMovies = (result) => {
+    const randomTrendingMoviesCopy = [...result];
+    if (!randomTrendingMoviesCopy) return;
+    
+    const randomTrendingMovies = [...randomTrendingMoviesCopy]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 5)
+      .map(({ id, title, poster_path }) => ({
+        id,
+        title,
+        poster_path,
+        count: 1,
+      }));
+    setTrendingMovies(randomTrendingMovies);
+
+    // const trendingMovie = result[0] || null;
+    // if (!trendingMovie) return;
+
+    // setTrendingMovies(prevTrends => {
+    //   // Check if movie already exists
+    //   const existingMovie = prevTrends.find(
+    //     movie => movie.id === trendingMovie.id
+    //   );
+
+    //   // If exists → increment count
+    //   if (existingMovie) {
+    //     return prevTrends.map(movie =>
+    //       movie.id === trendingMovie.id
+    //         ? { ...movie, count: movie.count + 1 }
+    //         : movie
+    //     );
+    //   }
+
+    //   // If max 5 reached → do nothing
+    //   if (prevTrends.length >= 5) {
+    //     return prevTrends;
+    //   }
+
+    //   // Else add new movie
+    //   return [
+    //     ...prevTrends,
+    //     {
+    //       id: trendingMovie.id,
+    //       title: trendingMovie.title,
+    //       poster_path: trendingMovie.poster_path,
+    //       count: 1,
+    //     },
+    //   ];
+    // });
   };
 
   useEffect(() => {
@@ -59,26 +121,11 @@ function App() {
 
   return (
     <>
-    
       <div className={`page ${theme} min-h-screen`}>
         <NavBar theme={theme} toggleTheme={toggleTheme} />
 
         <main className="max-w-7xl mx-auto px-4 py-8">
-          <section className="flex flex-col items-center text-center">
-            <img
-              src="/hero.png"
-              alt="Hero Banner"
-              className="w-64 sm:w-96 md:w-md lg:w-xl xl:w-3xl h-64 mb-6 object-contain"
-            />
-
-            <p className="max-w-2xl text-lg sm:text-2xl md:text-4xl lg:text-5xl font-semibold mb-6 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Find Your Next Favorite{" "}
-              <span className="bg-linear-to-r from-red-400 via-pink-500 to-red-600 bg-clip-text text-transparent">
-                Movie
-              </span>{" "}
-              to Watch!
-            </p>
-          </section>
+          <Header></Header>
 
           <Search
             searchTerm={searchTerm}
@@ -86,8 +133,30 @@ function App() {
             theme={theme}
           />
 
+          {/* TRENDING MOVIES */}
+          {trendingMovies.length > 0 && (
+            <section className="trending">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center sm:text-left">
+                Trending Movies
+              </h2>
+
+              <ul>
+                {trendingMovies.map((movie, index) => (
+                  <li key={movie.id}>
+                    <p>{index + 1}</p>
+                    <img
+                      src={movie.poster_path ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}` : "../../public/no-movie.png"}
+                      alt={movie.title}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* POPULAR MOVIES */}
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center sm:text-left">
-            All Movies
+            Popular Movies
           </h2>
           {isLoading && <Spinner />}
           {error && (
